@@ -1,0 +1,46 @@
+DROP TABLE mydb.tweets;
+ADD JAR hdfs:///user/flume/hive-serdes-1.0-SNAPSHOT.jar;
+
+SET mapred.input.dir.recursive=true;
+SET hive.mapred.supports.subdirectories=true;
+
+CREATE EXTERNAL TABLE mydb.tweets (
+id BIGINT,
+created_at STRING,
+source STRING,
+favorited BOOLEAN,
+retweeted_status STRUCT<
+text:STRING,
+user_tw:STRUCT<screen_name:STRING,name:STRING>,
+retweet_count:INT>,
+entities STRUCT<
+urls:ARRAY<STRUCT<expanded_url:STRING>>,
+user_mentions:ARRAY<STRUCT<screen_name:STRING,name:STRING>>,
+hashtags:ARRAY<STRUCT<text:STRING>>>,
+text STRING,
+user_tw STRUCT<
+screen_name:STRING,
+name:STRING,
+friends_count:INT,
+followers_count:INT,
+statuses_count:INT,
+verified:BOOLEAN,
+utc_offset:INT,
+time_zone:STRING>,
+in_reply_to_screen_name STRING
+) 
+ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+LOCATION '/user/yhissou/raw_tweets/';
+
+
+SET mapred.input.dir.recursive=true;
+SET hive.mapred.supports.subdirectories=true;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS tweets_scored(
+        text STRING, 
+        city STRING,
+        score STRING)
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    STORED AS TEXTFILE
+    location '/user/yhissou/tweets_score/';
