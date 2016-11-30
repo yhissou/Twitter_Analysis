@@ -39,7 +39,7 @@ SET hive.mapred.supports.subdirectories=true;
 CREATE EXTERNAL TABLE IF NOT EXISTS tweets_scored(
         text STRING, 
         city STRING,
-        score STRING
+        score STRING,
         dateTime STRING)
     ROW FORMAT DELIMITED
     FIELDS TERMINATED BY ','
